@@ -1,0 +1,26 @@
+#!/usr/bin/cloud-init
+#cloud-config
+runcmd:
+  - useradd -u 1111 -m hyperuser
+  - mkdir -p /home/hyperuser/.ssh
+  - chmod 700 /home/hyperuser/.ssh
+  - touch /home/hyperuser/.ssh/authorized_keys
+  - chmod 600 /home/hyperuser/.ssh/authorized_keys
+  - echo 'ssh-rsa Blah Blah SSH Key Blah Blah' >> /home/hyperuser/.ssh/authorized_keys
+  - chown -R hyperuser:hyperuser /home/hyperuser/.ssh/.*
+  - mkdir /home/hyperuser/hyperstor
+  - chown -R hyperuser:hyperuser /home/hyperuser/hyperstor/.*
+  - echo 'hyp.str.priv.hyperspire.net:/hyperstor    /home/hyperuser/hyperstor    nfs    user=hyperuser,defaults,auto,_netdev,nofail    0 0' >> /etc/fstab
+  - touch /etc/sudoers.d/1111-hyperuser
+  - echo '%hyperuser    ALL=(ALL)    NOPASSWD: ALL' >> /home/hyperuser/1111-hyperuser
+  - echo 'Defaults:hyperuser !requiretty' >> /home/hyperuser/1111-hyperuser
+  - echo 'Defaults:hyperuser !visiblepw' >> /home/hyperuser/1111-hyperuser
+  - mv /home/hyperuser/1111-hyperuser /etc/sudoers.d/
+  - chmod 0440 /etc/sudoers.d/1111-hyperuser
+  - useradd -u 2222 -s /usr/bin/nologin -m finger
+  - mkdir -p /home/finger/.ssh
+  - chmod 700 /home/finger/.ssh
+  - touch /home/finger/.ssh/authorized_keys
+  - chmod 600 /home/finger/.ssh/authorized_keys
+  - echo 'ssh-rsa Blah Blah SSH Key Blah Blah' >> /home/finger/.ssh/authorized_keys
+  - chown finger:finger /home/finger/.ssh/.*
