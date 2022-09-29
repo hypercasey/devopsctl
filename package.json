@@ -1,0 +1,20 @@
+{
+  "name": "devopsctl-service",
+  "version": "1.0.0",
+  "description": "Enables the ability to launch a remote DevOps stack, attach the VNICs, assign the Public IP's to the VNIC's, or run terminate and destroy operations.",
+  "main": "./devopsctl-service.ts",
+  "scripts": {},
+  "author": {
+    "name": "HyperSpire Foundation",
+    "email": ""
+  },
+  "contributors": [
+    "Casey <casey@hyperspire.com>"
+  ],
+  "devDependencies": {
+    "@types/node": "17.0.36",
+    "oci-sdk": "2.28.0",
+    "ts-node": "10.8.0",
+    "typescript": "4.7.2"
+  }
+}

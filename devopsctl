@@ -1,0 +1,173 @@
+#!/usr/bin/env bash
+# Enables the ability to launch a remote DevOps stack,
+# attach the VNICs, assign the Public IP's to the VNIC's,
+# or run terminate and destroy operations.
+workingDir="/var/home/hyperuser/.devopsctl-service"
+tsc="${workingDir}/node_modules/.bin/tsc"
+tsnode="${workingDir}/node_modules/.bin/ts-node"
+controlScript="devopsctl"
+# For debugging
+#nodemon="/usr/bin/nodemon"
+devOpsServer="devops.us.hyperspire.net"
+pidFile="${workingDir}/devopsctl.pid"
+
+waitInterval=60   # These will need to be divisible -
+updateInterval=30 # just *not* by zero 🙃
+
+networkWaitInterval=10
+serverCheckInterval=60
+serverLaunchWaitInterval=180
+upstreamGateway="gateway.hyperspire.net"
+dnsServers=("solv-11.us.hyperspire.net" "solv-22.us.hyperspire.net")
+
+function notify {
+  echo "{ status: \"${1}\", message: { ${2} } }"
+  return 0
+}
+
+function croak {
+  echo "{ status: \"WARNING\", message: { condition: \"${1}\" } }"
+  return 0
+}
+
+function choke {
+  echo "{ status: \"FAILED\", message: { error: \"${1}\" } }"
+  exit 1
+}
+
+[[ $* != "start" && $* != "stop" && $* != "reload" && $* != "status" && $* != "status -l" && $* != "status l" && $* != "network" ]] && choke "Usage: ${controlScript} [ start | stop | reload | status | network ]"
+cd "${workingDir}" || choke "Failed to cd ${workingDir}"
+
+function checkNetworkStatus {
+  [[ 0 == $(ping -c 1 -W 1 "$upstreamGateway" | grep -c '100%') ]] || networkDown=true
+  [[ -z "$networkDown" ]] || sleep "${networkWaitInterval}"
+
+  for ns in "${dnsServers[@]}"; do
+    [[ 0 == $(ping -c 1 -W 1 "${ns}" | grep -c '100%') ]] || dnsServerDown=true
+    [[ -z "$dnsServerDown" ]] && networkDown=true
+  done
+  [[ ! $dnsServerDown && 0 == $(ping -c 1 -W 1 "${upstreamGateway}" | grep -c '100%') ]] && unset networkDown
+  [[ ! $networkDown && 0 == $(ping -c 1 -W 1 "${devOpsServer}" | grep -c '100%') ]] && unset devOpsDown || devOpsDown=true
+  [[ $networkDown == true ]] && croak "\"networkDown\""
+  [[ $dnsServerDown == true ]] && croak "\"dnsServerDown\""
+  notify "NETWORK" "dnsServerDown: \"${dnsServerDown}\", networkDown: \"${networkDown}\", devOpsDown: \"${devOpsDown}\""
+  return 0
+}
+
+function runDevOpsStack {
+  [[ -f "${pidFile}" ]] && rm "${pidFile}" &>/dev/null
+  touch "${pidFile}"
+  if ! echo "${1}" >"${pidFile}"; then
+    croak "Failed to write PID to ${pidFile}"
+  fi
+  ${tsnode} "devopsctl-service.ts" </dev/null &
+  # For debugging
+  # ${nodemon} "devopsctl-service.ts"
+  return 0
+}
+
+function killDevOpsServer {
+  if ssh "${devOpsServer}" -t "sudo systemctl poweroff" &>/dev/null; then
+    notify "SERVER" "\"${devOpsServer}\" powered off"
+    sleep "${networkWaitInterval}"
+  else
+    croak "Failed to power off \"${devOpsServer}\""
+  fi
+  export KILL_DEVOPS_SERVER=true
+  notify "TERMINATING" "KILL_DEVOPS_SERVER: \"${KILL_DEVOPS_SERVER}\""
+  ${tsnode} "devopsctl-service.ts" </dev/null &
+  # For debugging
+  # ${nodemon} "devopsctl-service.ts"
+  unset KILL_DEVOPS_SERVER
+  return 0
+}
+
+function reloadDevOpsServer {
+  systemctl daemon-reload &>/dev/null
+  service devopsctl.service stop &>/dev/null
+  systemctl enable devopsctl.service &>/dev/null
+  service devopsctl.service start &>/dev/null
+  return 0
+}
+
+if [[ $* == "stop" ]]; then
+  if ! kill -9 "$(cat ${pidFile})" 2>/dev/null; then
+    croak "$(kill -9 $(cat ${pidFile}))"
+  fi
+  killDevOpsServer
+  while [[ $waitInterval -gt 0 ]]; do
+    notify "STOPPING" "killDevOpsServer: \"Waiting $waitInterval seconds for DevOps service to stop.\""
+    sleep $waitInterval
+    ((waitInterval = waitInterval - updateInterval))
+    continue
+  done
+  exit 0
+fi
+
+if [[ "reload" == "$*" ]]; then
+  killDevOpsServer
+  while [[ $waitInterval -gt 0 ]]; do
+    notify "TERMINATING" "killDevOpsServer: \"Waiting $waitInterval seconds for DevOps service to shutdown.\""
+    sleep $waitInterval
+    ((waitInterval = waitInterval - updateInterval))
+    continue
+  done
+  systemctl disable devopsctl.service &>/dev/null
+
+  if [[ ! -f "/etc/systemd/system/devopsctl.service" || $(date '+%s' -r ${workingDir}/devopsctl.service) -gt $(date '+%s' -r /etc/systemd/system/devopsctl.service) ]]; then
+    sudo cp -f "${workingDir}/devopsctl.service" "/etc/systemd/system/devopsctl.service"
+  fi
+  reloadDevOpsServer
+  exit 0
+fi
+
+if [[ "status" == "$*" ]]; then
+  journalctl -xu devopsctl.service | tail -n 16
+  echo -e "\e[48;5;237m  \e[0m Showing only the latest status updates."
+  echo -e "\e[48;5;237m  \e[0m Use \"${controlScript} -l\" for the full status."
+fi
+
+if [[ "status -l" == "$*" || "status l" == "$*" ]]; then
+  journalctl -n 256 -rxu devopsctl.service
+fi
+
+if [[ "network" == "$*" ]]; then
+  checkNetworkStatus
+  # For troubleshooting any network related
+  # issues that could cause the service to
+  # to attempt to run more servers if it
+  # presumes the server to be down when it
+  # could just be the network went down.
+  # notify "NETWORK" "dnsServerDown: \"${dnsServerDown}\", networkDown: \"${networkDown}\", devOpsDown: \"${devOpsDown}\""
+fi
+
+function monitorDevopsServer {
+ checkNetworkStatus
+  if [[ -z $networkDown && -n $devOpsDown ]]; then
+    # Once network check succeeds, make sure everything is up to date before procceeding.
+    runDevOpsStack "$$"
+    sleep ${serverLaunchWaitInterval}
+  else
+    sleep ${serverCheckInterval}
+    echo "{ status: \"RUNNING\", message: { dnsServerDown: \"${dnsServerDown}\", networkDown: \"${networkDown}\", devOpsDown: \"${devOpsDown}\" } }"
+  fi
+}
+
+if [[ "start" == "$*" ]]; then
+  checkNetworkStatus
+  if [[ -z $networkDown && -n $devOpsDown ]]; then
+    # Once network check succeeds, make sure everything is up to date before procceeding.
+    notify "STARTING" "runDevOpsStack: \"true\""
+    npm update &>/dev/null
+    ${tsc} &>/dev/null
+    runDevOpsStack "$$"
+    sleep ${serverLaunchWaitInterval}
+    while [[ $? -eq 0 ]]; do
+      monitorDevopsServer
+    done
+  else
+    while [[ $? -eq 0 ]]; do
+      monitorDevopsServer
+    done
+  fi
+fi
