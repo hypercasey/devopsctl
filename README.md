@@ -5,3 +5,9 @@ I wrote most of this software in a paranoid and manic altered state of conscious
 
 Basic Instructions:
   Replace all variable definitions with your own OCID's and make any other neccessary customizations to the build environment,rewrite any custom automated tasks to suit your own scenario, obviously replace any example hosts and SSH keys with your own, etc.
+
+
+Purpose:
+  This was created to save money by automating preemptible capacity instances and to enhance security by deploying the stack from a custom image, which reverts everything to a clean slated environment each time for development. Once online, the instance runs custom configuration scripts, downloads everything it needs from OCI containers and installs additional software from GitHub.
+
+  Since energy prices have gone through the roof, Oracle has apparently throttled preemptible instances, however, but it's still useful if you want to work with a clean slated build environment... it just won't save you any money anymore, neccessarily.
