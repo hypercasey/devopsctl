@@ -7,7 +7,7 @@ Disclaimer:
 Basic Instructions:
   Replace all variable definitions with your own OCID's and make any other neccessary customizations to the build environment.
 
-  rewrite any custom automated tasks to suit your own scenario, obviously replace any example hosts and SSH keys with your own, etc.
+  Rewrite any custom automated tasks to suit your own scenario, obviously replace any example hosts and SSH keys with your own, etc.
 
 Purpose:
   This was created to save money by automating preemptible capacity instances and to enhance security by deploying the stack from a custom image, which reverts everything to a clean slated environment each time for development. Once online, the instance runs custom configuration scripts, downloads everything it needs from OCI containers and installs additional software from GitHub.
