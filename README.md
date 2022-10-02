@@ -12,4 +12,4 @@ Basic Instructions:
 Purpose:
   This was created to save money by automating preemptible capacity instances and to enhance security by deploying the stack from a custom image, which reverts everything to a clean slated environment each time for development. Once online, the instance runs custom configuration scripts, downloads everything it needs from OCI containers and installs additional software from GitHub.
 
-  Since energy prices have gone through the roof, Oracle has apparently throttled preemptible instances, however, but it's still useful if you want to work with a clean slated build environment... it just won't save you any money anymore, neccessarily.
+  Since China won WWIII without firing a shot, energy prices went through the roof. Oracle has throttled preemptible instances, however; it's still useful if you want to work with a clean slated build environment. Unfortunately, it won't save you any money, neccessarily.
