@@ -8,6 +8,7 @@ createSshFingerUser=true
 createPoweroffUser=true
 createRebootUser=true
 createNfsMount=true
+RSAPubKey='ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCjTmc43qtCQNd9kd+EU9ltYPYLH3NZs/pZwo0Ae+mUooSiqVl8LdY3bpsRsQJh3xKhgi7y0CfHL/SUVB7YVwDrXH11RQ1VkWI28An/0U3GtQb/dIbdpgTb2CKU2LMWdGJWHHEw29Wvf2HWT0aPo5Bwby1N5lNHtnFftDGf+USub0FvSTUoLSbIh5l+VqHO78WMbGRIYrhSnuUJ+qje/L2PxewjXMSBWWIX4F+NpoP2QLlz5jSqOXxT2p1gKHV5a0C8zooCHm4/79QNpeRj19zHAvSOpPZwLk4keKhnW+jk2VHhO/qhdFk6x5aaDbyTxPm/9UFiuy4TL39UmPWcsE+/ ssh-key-2022-09-30';
 
 if [[ true == "${createUser}" ]]; then
   userName="hyperuser"
@@ -53,7 +54,7 @@ function devopsInit {
         sudo touch "/home/${userName}/.ssh/authorized_keys"
         sudo chmod 600 "/home/${userName}/.ssh/authorized_keys"
 
-        if sudo echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCjTmc43qtCQNd9kd+EU9ltYPYLH3NZs/pZwo0Ae+mUooSiqVl8LdY3bpsRsQJh3xKhgi7y0CfHL/SUVB7YVwDrXH11RQ1VkWI28An/0U3GtQb/dIbdpgTb2CKU2LMWdGJWHHEw29Wvf2HWT0aPo5Bwby1N5lNHtnFftDGf+USub0FvSTUoLSbIh5l+VqHO78WMbGRIYrhSnuUJ+qje/L2PxewjXMSBWWIX4F+NpoP2QLlz5jSqOXxT2p1gKHV5a0C8zooCHm4/79QNpeRj19zHAvSOpPZwLk4keKhnW+jk2VHhO/qhdFk6x5aaDbyTxPm/9UFiuy4TL39UmPWcsE+/ ssh-key-2022-09-30' | sudo tee -a "/home/${userName}/.ssh/authorized_keys" &> /dev/null; then
+        if sudo echo "${RSAPubKey}" | sudo tee -a "/home/${userName}/.ssh/authorized_keys" &> /dev/null; then
           echo "${userName}'s authorized_keys file was successfully updated" 
           sudo chown -R ${userName}. "/home/${userName}/."
         else
@@ -132,7 +133,7 @@ function devopsInit {
         sudo touch "/home/${fingerUserName}/.ssh/authorized_keys"
         sudo chmod 600 "/home/${fingerUserName}/.ssh/authorized_keys"
 
-        if sudo echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCjTmc43qtCQNd9kd+EU9ltYPYLH3NZs/pZwo0Ae+mUooSiqVl8LdY3bpsRsQJh3xKhgi7y0CfHL/SUVB7YVwDrXH11RQ1VkWI28An/0U3GtQb/dIbdpgTb2CKU2LMWdGJWHHEw29Wvf2HWT0aPo5Bwby1N5lNHtnFftDGf+USub0FvSTUoLSbIh5l+VqHO78WMbGRIYrhSnuUJ+qje/L2PxewjXMSBWWIX4F+NpoP2QLlz5jSqOXxT2p1gKHV5a0C8zooCHm4/79QNpeRj19zHAvSOpPZwLk4keKhnW+jk2VHhO/qhdFk6x5aaDbyTxPm/9UFiuy4TL39UmPWcsE+/ ssh-key-2022-09-30' | sudo tee -a "/home/${fingerUserName}/.ssh/authorized_keys" &> /dev/null; then
+        if sudo echo "${RSAPubKey}" | sudo tee -a "/home/${fingerUserName}/.ssh/authorized_keys" &> /dev/null; then
           echo "${fingerUserName}'s authorized_keys file was successfully updated" 
           sudo chown -R ${fingerUserName}. "/home/${fingerUserName}/."
         else
@@ -168,7 +169,7 @@ function devopsInit {
         sudo touch "/home/${poweroffUserName}/.ssh/authorized_keys"
         sudo chmod 600 "/home/${poweroffUserName}/.ssh/authorized_keys"
 
-        if sudo echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCjTmc43qtCQNd9kd+EU9ltYPYLH3NZs/pZwo0Ae+mUooSiqVl8LdY3bpsRsQJh3xKhgi7y0CfHL/SUVB7YVwDrXH11RQ1VkWI28An/0U3GtQb/dIbdpgTb2CKU2LMWdGJWHHEw29Wvf2HWT0aPo5Bwby1N5lNHtnFftDGf+USub0FvSTUoLSbIh5l+VqHO78WMbGRIYrhSnuUJ+qje/L2PxewjXMSBWWIX4F+NpoP2QLlz5jSqOXxT2p1gKHV5a0C8zooCHm4/79QNpeRj19zHAvSOpPZwLk4keKhnW+jk2VHhO/qhdFk6x5aaDbyTxPm/9UFiuy4TL39UmPWcsE+/ ssh-key-2022-09-30' | sudo tee -a "/home/${poweroffUserName}/.ssh/authorized_keys" &> /dev/null; then
+        if sudo echo "${RSAPubKey}" | sudo tee -a "/home/${poweroffUserName}/.ssh/authorized_keys" &> /dev/null; then
           echo "${poweroffUserName}'s authorized_keys file was successfully updated" 
           sudo chown -R ${poweroffUserName}. "/home/${poweroffUserName}/."
         else
@@ -208,7 +209,7 @@ function devopsInit {
         sudo touch "/home/${rebootUserName}/.ssh/authorized_keys"
         sudo chmod 600 "/home/${rebootUserName}/.ssh/authorized_keys"
 
-        if sudo echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCjTmc43qtCQNd9kd+EU9ltYPYLH3NZs/pZwo0Ae+mUooSiqVl8LdY3bpsRsQJh3xKhgi7y0CfHL/SUVB7YVwDrXH11RQ1VkWI28An/0U3GtQb/dIbdpgTb2CKU2LMWdGJWHHEw29Wvf2HWT0aPo5Bwby1N5lNHtnFftDGf+USub0FvSTUoLSbIh5l+VqHO78WMbGRIYrhSnuUJ+qje/L2PxewjXMSBWWIX4F+NpoP2QLlz5jSqOXxT2p1gKHV5a0C8zooCHm4/79QNpeRj19zHAvSOpPZwLk4keKhnW+jk2VHhO/qhdFk6x5aaDbyTxPm/9UFiuy4TL39UmPWcsE+/ ssh-key-2022-09-30' | sudo tee -a "/home/${rebootUserName}/.ssh/authorized_keys" &> /dev/null; then
+        if sudo echo "${RSAPubKey}" | sudo tee -a "/home/${rebootUserName}/.ssh/authorized_keys" &> /dev/null; then
           echo "${rebootUserName}'s authorized_keys file was successfully updated" 
           sudo chown -R ${rebootUserName}. "/home/${rebootUserName}/."
         else
