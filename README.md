@@ -27,7 +27,7 @@ Basic Instructions:
   
   Run systemctl [ enable/start/stop/daemon-reload ] devopsctl.service as needed.
   
-  Edit and run init-devops-server, after placing init-devops-server under ~/bin. If you want to have a handy way of automating the environment to suit your needs.
+  Edit and run init-devops-server, after placing init-devops-server under ~/bin. If you want to have a handy way of automating the environment to suit your needs. Be sure to give the instance creation process a few minutes to complete before running init-devops-server to ensure networking setup has completed.
   
   The automated initialization scripts devops-init.sh, devops-init-url.sh and devops-prepare.sh will need to be updated to your own object storage endpoint URL's which allows the instance to access these scripts and also the OCI run command if you ever want to use that approach, as these scripts were designed to be compatible with either method. 
 
