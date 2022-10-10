@@ -15,7 +15,7 @@ Basic Instructions:
   
   Copy devopsctl.service to your systemd folder (usually /etc/systemd/system).
   
-  Run systemctl [ start/stop/daemon-reload ] devopsctl.service.
+  Run systemctl [ enable/start/stop/daemon-reload ] devopsctl.service as needed.
   
   Edit and run init-devops-server, after placing init-devops-server under ~/bin. If you want to have a handy way of automating the environment to suit your needs.
   
