@@ -1,5 +1,5 @@
 # devopsctl
-Automates a devops deployment on Oracle Cloud Infrastructure. This is something used internally, but could be of potential value to those externally as well.
+Automates a devops deployment on Oracle Cloud Infrastructure. This is really only useful for those requiring a clean-slated remote build environment and are already developing with Oracle Cloud Infrastructure, who only need access to the remote build environment while they are working on it to cut costs of running an instance full time.
 
 Disclaimer:
   I wrote most of this software in a paranoid and manic altered state of consciousness as is legally required for my medical conditions as a combat veteran struggling in the survival against PTSD, so I'll go ahead and write some instructions once I can afford my medications again so that I remember whatever it was I was trying to do in the first place.
