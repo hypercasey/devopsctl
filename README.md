@@ -11,6 +11,19 @@ Basic Instructions:
   
   Create stack(s) and upadate all neccessary scripts to those stack OCID's.
   
+  At a minimum, be sure to enable the following in your Terraform configuration:
+      is_management_disabled = "false"
+      plugins_config {
+        desired_state = "ENABLED"
+        name = "OS Management Service Agent"
+      }
+      plugins_config {
+        desired_state = "ENABLED"
+        name = "Management Agent"
+      }
+      
+  If using multiple subnets, remember to use the correct subnet during stack creation, or instance creation will fail with an obscure warning burried deep within the Terraform log.
+  
   Create your own custom image and copy that image's OCID to your stack if you want to use a custom image source.
   
   Copy devopsctl.service to your systemd folder (usually /etc/systemd/system).
