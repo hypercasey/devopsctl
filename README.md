@@ -8,8 +8,20 @@ Basic Instructions:
   Replace all variable definitions with your own OCID's and make any other neccessary customizations to the build environment.
 
   Rewrite any custom automated tasks to suit your own scenario, obviously replace any example hosts and SSH keys with your own, etc.
+  
+  Create stack(s) and upadate all neccessary scripts to those stack OCID's.
+  
+  Create your own custom image and copy that image's OCID to your stack if you want to use a custom image source.
+  
+  Copy devopsctl.service to your systemd folder (usually /etc/systemd/system).
+  
+  Run systemctl [ start/stop/daemon-reload ] devopsctl.service.
+  
+  Edit and run init-devops-server, after placing init-devops-server under ~/bin. If you want to have a handy way of automating the environment to suit your needs.
+  
+  The automated initialization scripts devops-init.sh, devops-init-url.sh and devops-prepare.sh will need to be updated to your own object storage endpoint URL's which allows the instance to access these scripts and also the OCI run command if you ever want to use that approach, as these scripts were designed to be compatible with either method. 
 
 Purpose:
   This was created to save money by automating preemptible capacity instances and to enhance security by deploying the stack from a custom image, which reverts everything to a clean slated environment each time for development. Once online, the instance runs custom configuration scripts, downloads everything it needs from OCI containers and installs additional software from GitHub.
 
-  Since China won WWIII without firing a shot, energy prices went through the roof. Oracle has throttled preemptible instances, however; it's still useful if you want to work with a clean slated build environment. Unfortunately, it won't save you any money, neccessarily.
+  Since China seems to have won WWIII through the use of barbaric internet censorship, propoganda ad compaigns fueld through throwing around their weight as advertisers, and of course, biologival weapons of mass destruction, energy prices went through the roof. Oracle has throttled preemptible instances, however; it's still useful if you want to work with a clean slated build environment. Unfortunately, it won't save you any money, neccessarily, at the moment.
