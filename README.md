@@ -1,9 +1,6 @@
 # devopsctl
 Automates a devops deployment on Oracle Cloud Infrastructure. This is really only useful for those requiring a clean-slated remote build environment and are already developing with Oracle Cloud Infrastructure, who only need access to the remote build environment while they are working on it to cut costs of running an instance full time.
 
-Disclaimer:
-  I wrote most of this software in a paranoid and manic altered state of consciousness as is legally required for my medical conditions as a combat veteran struggling in the survival against PTSD, so I'll go ahead and write some instructions once I can afford my medications again so that I remember whatever it was I was trying to do in the first place.
-
 Basic Instructions:
   Replace all variable definitions with your own OCID's and make any other neccessary customizations to the build environment.
 
@@ -24,7 +21,7 @@ Basic Instructions:
       
   If using multiple subnets, remember to use the correct subnet during stack creation, or instance creation will fail with an obscure warning burried deep within the Terraform log.
   
-  Create your own custom image and copy that image's OCID to your stack if you want to use a custom image source.
+  Create your own custom image and copy that image's OCID to your stack if you want to use a custom image source. Alternatively, you can use an Oracle supplied image or a persistent boot volume, just follow the instructions in devops-config.ts to enable these operations and make any neccessary changes to your Terraform configuration, namely the source type, either "IMAGE" if using an image, or "VOLUME" if using a boot volume.
   
   Copy devopsctl.service to your systemd folder (usually /etc/systemd/system).
   
