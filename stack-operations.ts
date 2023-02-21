@@ -36,7 +36,6 @@ const primaryPrivateIp = `${dev.ociPrivateIp[0]}`;
 const secondaryPrivateIp = `${dev.ociPrivateIp[1]}`;
 const tertiaryPrivateIp = `${dev.ociPrivateIp[2]}`;
 const quaternaryPrivateIp = `${dev.ociPrivateIp[3]}`;
-
 const primarySubnetId = `${dev.ociSubnetId[0]}`;
 const secondarySubnetId = `${dev.ociSubnetId[1]}`;
 const tertiarySubnetId = `${dev.ociSubnetId[2]}`;
@@ -110,6 +109,8 @@ export const stackOperations = {
       return this.choke({ error: `${error}`, stage: "listInstancesRequest" });
     }
   },
+
+  assignPublicIp: `${dev.ociPublicIpId}`,
 
   attachPublicIp: async function attachPublicIp(): Promise<string> {
     try {
