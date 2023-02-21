@@ -61,7 +61,7 @@ let killDevOpsServer = `${env.KILL_DEVOPS_SERVER}` || "false";
         vnic: "",
       };
       await so.sleep({ interval: 15000 });
-      if (0 < runDevOpsStack.id.length)
+      if (0 < runDevOpsStack.id.length && "" != `${so.assignPublicIp}`)
         runDevOpsStack = {
           status: runDevOpsStack.status,
           id: runDevOpsStack.id,
@@ -69,11 +69,20 @@ let killDevOpsServer = `${env.KILL_DEVOPS_SERVER}` || "false";
           vnic: "",
         };
       await so.sleep({ interval: 15000 });
+      // For preconfigured public ip.
       if (runDevOpsStack.ip === "ASSIGNED")
         runDevOpsStack = {
           status: runDevOpsStack.status,
           id: runDevOpsStack.id,
           ip: runDevOpsStack.ip,
+          vnic: await so.attachVnic({ ocid: `${runDevOpsStack.id}` }),
+        };
+      // For auto assigned public ip.
+      if ("" === `${so.assignPublicIp}`)
+        runDevOpsStack = {
+          status: runDevOpsStack.status,
+          id: runDevOpsStack.id,
+          ip: "AUTO",
           vnic: await so.attachVnic({ ocid: `${runDevOpsStack.id}` }),
         };
 
